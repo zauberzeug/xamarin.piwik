@@ -1,5 +1,5 @@
 ﻿using System;
-namespace iOS
+namespace Xamarin.Piwik.iOS
 {
     public class MyClass
     {
