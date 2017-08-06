@@ -7,12 +7,12 @@ using Newtonsoft.Json.Linq;
 
 namespace Xamarin.Piwik
 {
-    public class BufferedActions
+    public class ActionBuffer
     {
         string baseParameters;
         List<string> actions = new List<string>();
 
-        public BufferedActions(NameValueCollection baseParameters)
+        public ActionBuffer(NameValueCollection baseParameters)
         {
             this.baseParameters = $"?rec=1&apiv=1&{baseParameters}&";
         }
@@ -22,13 +22,21 @@ namespace Xamarin.Piwik
             actions.Add(baseParameters + parameters);
         }
 
+        public void Prepend(ActionBuffer otherActions)
+        {
+            actions.InsertRange(0, otherActions.actions);
+        }
+
+        public void Clear()
+        {
+            actions.Clear();
+        }
+
         public override string ToString()
         {
             var data = new Dictionary<string, object>();
             data["requests"] = actions;
             return JsonConvert.SerializeObject(data);
         }
-
-
     }
 }
