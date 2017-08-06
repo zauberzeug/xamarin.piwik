@@ -9,7 +9,11 @@ namespace Xamarin.Piwik.Tests
         public async System.Threading.Tasks.Task TestTrackingPageVisit()
         {
             var analytics = new Analytics("https://tracktest.365farmnet.com", 3);
+            analytics.Verbose = true;
+
             analytics.TrackPage("Main");
+            analytics.TrackPage("LevelA / Sub");
+
             await analytics.Dispatch();
         }
     }

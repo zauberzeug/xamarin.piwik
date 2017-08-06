@@ -20,19 +20,24 @@ namespace Xamarin.Piwik
         {
             var visitor = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16).ToUpper(); // TODO persistent visitor id
             this.apiUrl = $"{apiUrl}/piwik.php";
-            baseParameters = CreateParameters();
+            baseParameters = HttpUtility.ParseQueryString(string.Empty);
             baseParameters["idsite"] = siteId.ToString();
             baseParameters["_id"] = visitor;
             baseParameters["cid"] = visitor;
             actions = new ActionBuffer(baseParameters);
         }
 
-        public void TrackPage(string name, string path = "/main")
+        public bool Verbose { get; set; } = false;
+
+        /// <summary>
+        /// Tracks a page visit.
+        /// </summary>
+        /// <param name="name">page name (eg. "Settings" or "Settings / I18N / Units"</param>
+        public void TrackPage(string name)
         {
             var parameters = CreateParameters();
             parameters["action_name"] = name;
-            parameters["url"] = $"http:/{path}";
-            parameters["rand"] = random.Next().ToString();
+            parameters["url"] = $"http://app-has-no-url";
 
             lock (actions)
                 actions.Add(parameters);
@@ -44,29 +49,33 @@ namespace Xamarin.Piwik
             lock (actionsToDispatch)
                 actions = new ActionBuffer(baseParameters); // new action buffer to gather tracking infos while we dispatch
 
-            Console.WriteLine(actionsToDispatch);
+            Log(actionsToDispatch);
             var content = new StringContent(actionsToDispatch.ToString(), Encoding.UTF8, "application/json");
+
             try {
                 var response = await httpClient.PostAsync(apiUrl, content);
-                if (response.StatusCode == HttpStatusCode.OK) {
-                    actionsToDispatch.Clear();
+                if (response.StatusCode == HttpStatusCode.OK)
                     return;
-                } else {
-                    Console.WriteLine(response);
-                }
             } catch (Exception e) {
                 Console.WriteLine(e);
             }
 
             lock (actions)
-                actions.Prepend(actionsToDispatch); // if dispatching was unsucessful, we need to keep the actions
+                actions.Prepend(actionsToDispatch); // if dispatching failed, we need to keep the actions
         }
 
         NameValueCollection CreateParameters()
         {
             var parameters = HttpUtility.ParseQueryString(string.Empty);
-            // TODO add cdt as unix time stamp (https://github.com/piwik/piwik/issues/8998)
+            parameters["rand"] = random.Next().ToString();
+            parameters["cdt"] = (DateTimeOffset.UtcNow.ToUnixTimeSeconds()).ToString(); // TODO dispatching cdt older thant 24 h needs token_auth in bulk request
             return parameters;
+        }
+
+        void Log(object msg)
+        {
+            if (Verbose)
+                Console.WriteLine(msg.ToString());
         }
     }
 }
