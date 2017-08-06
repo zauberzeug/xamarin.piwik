@@ -9,14 +9,14 @@ namespace Xamarin.Piwik
         string baseUri;
         List<string> actions = new List<string>();
 
-        public BufferedActions(string baseUri)
+        public BufferedActions(string baseUri, NameValueCollection baseParameters)
         {
-            this.baseUri = baseUri;
+            this.baseUri = baseUri + baseParameters;
         }
 
-        public void Add(NameValueCollection action)
+        public void Add(NameValueCollection parameters)
         {
-            actions.Add(baseUri + action);
+            actions.Add(baseUri + parameters);
         }
 
         public override string ToString()

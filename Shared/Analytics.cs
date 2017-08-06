@@ -12,17 +12,20 @@ namespace Xamarin.Piwik
         public Analytics(string apiUrl, int siteId)
         {
             var visitor = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16).ToUpper(); // TODO persistent visitor id
-            var baseUri = $"{apiUrl}/piwik.php?idsite={siteId}&rec=1&_id={visitor}&apiv=1&";
-            actions = new BufferedActions(baseUri);
+            var baseUri = $"{apiUrl}/piwik.php?rec=1&_id={visitor}&apiv=1&";
+            var baseParameters = CreateParameters();
+            baseParameters["idsite"] = siteId.ToString();
+            baseParameters["_id"] = visitor;
+            actions = new BufferedActions(baseUri, baseParameters);
         }
 
         public void TrackPage(string name, string path = "/")
         {
-            var action = CreateAction();
-            action["action_name"] = name;
-            action["url"] = path;
+            var parameters = CreateParameters();
+            parameters["action_name"] = name;
+            parameters["url"] = path;
 
-            actions.Add(action);
+            actions.Add(parameters);
         }
 
         public void Dispatch()
@@ -30,7 +33,7 @@ namespace Xamarin.Piwik
             Console.WriteLine(actions);
         }
 
-        NameValueCollection CreateAction()
+        NameValueCollection CreateParameters()
         {
             return HttpUtility.ParseQueryString(string.Empty);
         }
