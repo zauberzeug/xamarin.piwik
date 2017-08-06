@@ -6,11 +6,11 @@ namespace Xamarin.Piwik.Tests
     public class TestAnalytics
     {
         [Test()]
-        public void TestTrackingPageVisit()
+        public async System.Threading.Tasks.Task TestTrackingPageVisit()
         {
-            var analytics = new Analytics("https://tracktest.365farmnet.com", 13);
+            var analytics = new Analytics("https://tracktest.365farmnet.com", 3);
             analytics.TrackPage("Main");
-            analytics.Dispatch();
+            await analytics.Dispatch();
         }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Xamarin.Piwik
 {
@@ -11,7 +14,7 @@ namespace Xamarin.Piwik
 
         public BufferedActions(string baseUri, NameValueCollection baseParameters)
         {
-            this.baseUri = baseUri + baseParameters;
+            this.baseUri = baseUri + baseParameters + "&";
         }
 
         public void Add(NameValueCollection parameters)
@@ -21,7 +24,13 @@ namespace Xamarin.Piwik
 
         public override string ToString()
         {
-            return string.Format("[BufferedActions]\n  " + String.Join("\n  ", actions));
+            return actions.First();
+
+            var data = new Dictionary<string, object>();
+            data["requests"] = actions;
+            return JsonConvert.SerializeObject(data);
         }
+
+
     }
 }
