@@ -29,6 +29,8 @@ namespace Xamarin.Piwik
 
         public bool Verbose { get; set; } = false;
 
+        public int UnsentActions { get { lock (actions) return actions.Count; } }
+
         /// <summary>
         /// Tracks a page visit.
         /// </summary>
@@ -56,8 +58,10 @@ namespace Xamarin.Piwik
                 var response = await httpClient.PostAsync(apiUrl, content);
                 if (response.StatusCode == HttpStatusCode.OK)
                     return;
+
+                Log(response);
             } catch (Exception e) {
-                Console.WriteLine(e);
+                Log(e);
             }
 
             lock (actions)
@@ -77,5 +81,7 @@ namespace Xamarin.Piwik
             if (Verbose)
                 Console.WriteLine(msg.ToString());
         }
+
+
     }
 }

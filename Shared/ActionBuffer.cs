@@ -17,6 +17,8 @@ namespace Xamarin.Piwik
             this.baseParameters = $"?rec=1&apiv=1&{baseParameters}&";
         }
 
+        public int Count { get { return actions.Count; } }
+
         public void Add(NameValueCollection parameters)
         {
             actions.Add(baseParameters + parameters);
