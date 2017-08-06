@@ -14,6 +14,7 @@ namespace Xamarin.Piwik
         ActionBuffer actions;
         NameValueCollection baseParameters;
         HttpClient httpClient = new HttpClient();
+        Random random = new Random();
 
         public Analytics(string apiUrl, int siteId)
         {
@@ -22,6 +23,7 @@ namespace Xamarin.Piwik
             baseParameters = CreateParameters();
             baseParameters["idsite"] = siteId.ToString();
             baseParameters["_id"] = visitor;
+            baseParameters["cid"] = visitor;
             actions = new ActionBuffer(baseParameters);
         }
 
@@ -30,6 +32,7 @@ namespace Xamarin.Piwik
             var parameters = CreateParameters();
             parameters["action_name"] = name;
             parameters["url"] = $"http:/{path}";
+            parameters["rand"] = random.Next().ToString();
 
             lock (actions)
                 actions.Add(parameters);
@@ -37,7 +40,6 @@ namespace Xamarin.Piwik
 
         public async Task Dispatch()
         {
-
             var actionsToDispatch = actions;
             lock (actionsToDispatch)
                 actions = new ActionBuffer(baseParameters); // new action buffer to gather tracking infos while we dispatch
