@@ -9,23 +9,21 @@ namespace Xamarin.Piwik
 {
     public class BufferedActions
     {
-        string baseUri;
+        string baseParameters;
         List<string> actions = new List<string>();
 
-        public BufferedActions(string baseUri, NameValueCollection baseParameters)
+        public BufferedActions(NameValueCollection baseParameters)
         {
-            this.baseUri = baseUri + baseParameters + "&";
+            this.baseParameters = $"?rec=1&apiv=1&{baseParameters}&";
         }
 
         public void Add(NameValueCollection parameters)
         {
-            actions.Add(baseUri + parameters);
+            actions.Add(baseParameters + parameters);
         }
 
         public override string ToString()
         {
-            return actions.First();
-
             var data = new Dictionary<string, object>();
             data["requests"] = actions;
             return JsonConvert.SerializeObject(data);

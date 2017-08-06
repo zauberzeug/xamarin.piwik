@@ -3,29 +3,31 @@ using System.Web;
 using System.Collections.Specialized;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace Xamarin.Piwik
 {
     public class Analytics
     {
+        string apiUrl;
         BufferedActions actions;
         HttpClient httpClient = new HttpClient();
 
         public Analytics(string apiUrl, int siteId)
         {
             var visitor = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16).ToUpper(); // TODO persistent visitor id
-            var baseUri = $"{apiUrl}/piwik.php?rec=1&&apiv=1&";
+            this.apiUrl = $"{apiUrl}/piwik.php";
             var baseParameters = CreateParameters();
             baseParameters["idsite"] = siteId.ToString();
             baseParameters["_id"] = visitor;
-            actions = new BufferedActions(baseUri, baseParameters);
+            actions = new BufferedActions(baseParameters);
         }
 
-        public void TrackPage(string name, string path = "/")
+        public void TrackPage(string name, string path = "/main")
         {
             var parameters = CreateParameters();
             parameters["action_name"] = name;
-            parameters["url"] = $"http://root{path}";
+            parameters["url"] = $"http:/{path}";
 
             actions.Add(parameters);
         }
@@ -33,8 +35,10 @@ namespace Xamarin.Piwik
         public async Task Dispatch()
         {
             Console.WriteLine(actions);
-            var response = await httpClient.GetAsync(actions.ToString());
+            var content = new StringContent(actions.ToString(), Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(apiUrl, content);
             Console.WriteLine(response);
+
         }
 
         NameValueCollection CreateParameters()
