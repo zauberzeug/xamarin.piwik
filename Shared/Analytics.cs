@@ -25,6 +25,8 @@ namespace Xamarin.Piwik
             baseParameters["_id"] = visitor;
             baseParameters["cid"] = visitor;
             actions = new ActionBuffer(baseParameters);
+
+            httpClient.Timeout = TimeSpan.FromSeconds(30);
         }
 
         public bool Verbose { get; set; } = false;
@@ -62,6 +64,7 @@ namespace Xamarin.Piwik
                 Log(response);
             } catch (Exception e) {
                 Log(e);
+                httpClient.CancelPendingRequests();
             }
 
             lock (actions)

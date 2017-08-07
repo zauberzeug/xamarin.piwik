@@ -5,6 +5,7 @@ using System.Net;
 using System.IO;
 using System.Net.Sockets;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace Xamarin.Piwik.Tests
 {
@@ -21,16 +22,15 @@ namespace Xamarin.Piwik.Tests
             analytics.TrackPage("Main");
             analytics.TrackPage("LevelA / Sub");
 
-            using (var receivedData = MockedPiwikServer(url)) {
-                await analytics.Dispatch();
-                Assert.That(analytics.UnsentActions, Is.EqualTo(0));
+            var receivedData = MockedPiwikServer(url);
+            await analytics.Dispatch();
+            Assert.That(analytics.UnsentActions, Is.EqualTo(0));
 
-                var json = JObject.Parse(await receivedData);
-                var main = json["requests"][0].ToString();
-                Assert.That(main, Does.Contain("action_name=Main"));
-                var sub = json["requests"][1].ToString();
-                Assert.That(sub, Does.Contain("action_name=LevelA+%2f+Sub"));
-            }
+            var json = JObject.Parse(await receivedData);
+            var main = json["requests"][0].ToString();
+            Assert.That(main, Does.Contain("action_name=Main"));
+            var sub = json["requests"][1].ToString();
+            Assert.That(sub, Does.Contain("action_name=LevelA+%2f+Sub"));
         }
 
         [Test()]
@@ -42,17 +42,36 @@ namespace Xamarin.Piwik.Tests
 
             analytics.TrackPage("Main");
 
-            using (var receivedData = MockedPiwikServer(url, statusCode: 500)) {
-                await analytics.Dispatch();
-                Assert.That(analytics.UnsentActions, Is.EqualTo(1));
-                await receivedData;
-            }
+            var receivedData = MockedPiwikServer(url, statusCode: 500);
+            await analytics.Dispatch();
+            await receivedData;
+            Assert.That(analytics.UnsentActions, Is.EqualTo(1));
 
-            using (var receivedData = MockedPiwikServer(url, statusCode: 200)) {
-                await analytics.Dispatch();
-                Assert.That(analytics.UnsentActions, Is.EqualTo(0));
-                await receivedData;
-            }
+            receivedData = MockedPiwikServer(url);
+            await analytics.Dispatch();
+            await receivedData;
+            Assert.That(analytics.UnsentActions, Is.EqualTo(0));
+        }
+
+        [Test()]
+        public async Task TestConnectionErrorWhileDispatching()
+        {
+            var url = GetLocalhostAddress();
+            var analytics = new Analytics(url, 3);
+            analytics.Verbose = true;
+
+            analytics.TrackPage("Main");
+
+            await analytics.Dispatch();
+            Assert.That(analytics.UnsentActions, Is.EqualTo(1));
+
+
+            var receivedData = MockedPiwikServer(url);
+            Thread.Sleep(100); // delay before dispaching to make sure the mocked server has opend the port
+            await analytics.Dispatch();
+            await receivedData;
+            Assert.That(analytics.UnsentActions, Is.EqualTo(0));
+
         }
 
         Task<string> MockedPiwikServer(string url, int statusCode = 200)
@@ -64,17 +83,22 @@ namespace Xamarin.Piwik.Tests
 
                 // GetContext method blocks while waiting for a request. 
                 HttpListenerContext context = listener.GetContext();
+
                 var body = new StreamReader(context.Request.InputStream).ReadToEnd();
 
                 HttpListenerResponse response = context.Response;
 
-                response.StatusCode = statusCode;
-                Stream stream = response.OutputStream;
-                var writer = new StreamWriter(stream);
-                writer.Write("");
-                writer.Close();
+                try {
+                    response.StatusCode = statusCode;
+                    Stream stream = response.OutputStream;
+                    using (var writer = new StreamWriter(stream))
+                        writer.Write("");
 
-                listener.Stop();
+                    listener.Stop();
+
+                } catch (Exception e) {
+                    Console.WriteLine(e);
+                }
 
                 Assert.That(context.Request.ContentType, Is.EqualTo("application/json; charset=utf-8"));
                 Assert.That(context.Request.HttpMethod, Is.EqualTo("POST"));
