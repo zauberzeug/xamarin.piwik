@@ -47,7 +47,7 @@ namespace Xamarin.Piwik
                 actions.Add(parameters);
         }
 
-        public async Task Dispatch()
+        public async Task Dispatch() // TODO run in background: http://arteksoftware.com/backgrounding-with-xamarin-forms/
         {
             var actionsToDispatch = actions;
             lock (actionsToDispatch)

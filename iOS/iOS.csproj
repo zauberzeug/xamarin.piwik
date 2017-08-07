@@ -7,7 +7,7 @@
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>Xamarin.Piwik.iOS</RootNamespace>
-    <AssemblyName>iOS</AssemblyName>
+    <AssemblyName>Xamarin.Piwik.iOS</AssemblyName>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -50,6 +50,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PerpetualEngine.SimpleStorage.iOS-Unified">
+      <HintPath>..\packages\SimpleStorage.1.4.2\lib\Xamarin.iOS10\PerpetualEngine.SimpleStorage.iOS-Unified.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
