@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+      <id>Xamarin.Piwik</id>
+      <version>0.1.1</version>
+      <authors>Perpetual Mobile</authors>
+      <owners>Perpetual Mobile</owners>
+      <description>Piwik implementation for Xamarin Apps</description>
+      <copyright>Perpetual Mobile Copyright 2017</copyright>
+      <dependencies>
+         <group>
+             <dependency id="SimpleStorage" version="1.4.2" />
+         </group>
+     </dependencies>
+  </metadata>
+    <files>
+        <file src="iOS/bin/Release/Xamarin.Piwik.iOS.dll" target="lib\Xamarin.iOS10" />
+		    <!--file src="Droid/bin/Release/Xamarin.Piwik.Android.dll" target="lib\MonoAndroid" /-->
+        <file src="Tests/bin/Release/Xamarin.Piwik.Tests.dll" target="lib\net45" />
+    </files>
+</package>
