@@ -18,7 +18,6 @@ namespace Xamarin.Piwik
         Random random = new Random();
         SimpleStorage storage = SimpleStorage.EditGroup("xamarin.piwik");
 
-
         public Analytics(string apiUrl, int siteId)
         {
 
@@ -44,14 +43,20 @@ namespace Xamarin.Piwik
         public int UnsentActions { get { lock (actions) return actions.Count; } }
 
         /// <summary>
+        /// The base url used by the app (piwi's url parameter). Default is http://app
+        /// </summary>
+        public string AppUrl { get; set; } = "http://app";
+
+        /// <summary>
         /// Tracks a page visit.
         /// </summary>
-        /// <param name="name">page name (eg. "Settings" or "Settings / I18N / Units"</param>
-        public void TrackPage(string name)
+        /// <param name="name">page name (eg. "Settings", "Users", etc)</param>
+        /// <param name="path">path which led to the page (eg. "/settings/language"), default is "/"</param>
+        public void TrackPage(string name, string path = "/")
         {
             var parameters = CreateParameters();
             parameters["action_name"] = name;
-            parameters["url"] = $"http://app-has-no-url";
+            parameters["url"] = $"{AppUrl}{path}";
 
             lock (actions)
                 actions.Add(parameters);
