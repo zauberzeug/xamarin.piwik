@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Text;
 using System.Net;
 using PerpetualEngine.Storage;
+using System.Timers;
 
 namespace Xamarin.Piwik
 {
@@ -18,6 +19,8 @@ namespace Xamarin.Piwik
         Random random = new Random();
         SimpleStorage storage = SimpleStorage.EditGroup("xamarin.piwik");
 
+        Timer timer = new Timer();
+
         public Analytics(string apiUrl, int siteId)
         {
 
@@ -28,7 +31,7 @@ namespace Xamarin.Piwik
                 storage.Put("visitor_id", visitor);
             }
 
-            this.apiUrl = $"{apiUrl}/piwik.php";
+            this.apiUrl = apiUrl.StartsWith("https://requestb.in") ? apiUrl : $"{apiUrl}/piwik.php"; // requestb.in can be used for testing and debugging
             baseParameters = HttpUtility.ParseQueryString(string.Empty);
             baseParameters["idsite"] = siteId.ToString();
             baseParameters["_id"] = visitor;
@@ -36,6 +39,10 @@ namespace Xamarin.Piwik
             actions = new ActionBuffer(baseParameters);
 
             httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+            timer.Interval = TimeSpan.FromSeconds(10).TotalMilliseconds;
+            timer.Elapsed += async (s, args) => await Dispatch();
+            timer.Start();
         }
 
         public bool Verbose { get; set; } = false;

@@ -10,5 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Demo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PiwikPage.cs" />
   </ItemGroup>
 </Project>
