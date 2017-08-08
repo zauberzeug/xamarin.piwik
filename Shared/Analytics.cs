@@ -72,8 +72,11 @@ namespace Xamarin.Piwik
         public async Task Dispatch() // TODO run in background: http://arteksoftware.com/backgrounding-with-xamarin-forms/
         {
             var actionsToDispatch = actions;
-            lock (actionsToDispatch)
+            lock (actionsToDispatch) {
+                if (actionsToDispatch.Count == 0)
+                    return;
                 actions = new ActionBuffer(baseParameters); // new action buffer to gather tracking infos while we dispatch
+            }
 
             Log(actionsToDispatch);
             var content = new StringContent(actionsToDispatch.ToString(), Encoding.UTF8, "application/json");
