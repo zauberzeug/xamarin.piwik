@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text;
 using System.Net;
+using PerpetualEngine.Storage;
 
 namespace Xamarin.Piwik
 {
@@ -15,10 +16,19 @@ namespace Xamarin.Piwik
         NameValueCollection baseParameters;
         HttpClient httpClient = new HttpClient();
         Random random = new Random();
+        SimpleStorage storage = SimpleStorage.EditGroup("xamarin.piwik");
+
 
         public Analytics(string apiUrl, int siteId)
         {
-            var visitor = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16).ToUpper(); // TODO persistent visitor id
+
+            var visitor = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16).ToUpper();
+            if (storage.HasKey("visitor_id"))
+                visitor = storage.Get("visitor_id");
+            else {
+                storage.Put("visitor_id", visitor);
+            }
+
             this.apiUrl = $"{apiUrl}/piwik.php";
             baseParameters = HttpUtility.ParseQueryString(string.Empty);
             baseParameters["idsite"] = siteId.ToString();

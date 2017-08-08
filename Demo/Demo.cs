@@ -1,11 +1,14 @@
 ﻿using System;
 
 using Xamarin.Forms;
+using Xamarin.Piwik;
 
 namespace Demo
 {
     public class App : Application
     {
+        public static Analytics Analytics = new Analytics("https://tracktest.365farmnet.com", 3);
+
         public App()
         {
             var content = new ContentPage {
