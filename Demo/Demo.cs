@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Piwik;
 
@@ -38,12 +38,13 @@ namespace Demo
 
         protected override void OnSleep()
         {
-            // Handle when your app sleeps
+            Analytics.LeavingTheApp();
         }
 
         protected override void OnResume()
         {
-            // Handle when your app resumes
+            var path = "/" + string.Join("/", MainPage.Navigation.NavigationStack.Select(p => p.Title).ToArray());
+            Analytics.TrackPage(MainPage.Navigation.NavigationStack.First().Title, path);
         }
     }
 }

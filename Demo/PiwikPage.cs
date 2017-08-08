@@ -10,7 +10,8 @@ namespace Demo
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            App.Analytics.TrackPage(Title, "/" + string.Join("/", Navigation.NavigationStack.Select(p => p.Title).ToArray()));
+            var path = "/" + string.Join("/", Navigation.NavigationStack.Select(p => p.Title).ToArray());
+            App.Analytics.TrackPage(Title, path);
         }
     }
 }
