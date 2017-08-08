@@ -3,7 +3,7 @@ set -x
 
 if [[ $(git status -s) ]]; then
     echo "You have uncommitted files. Commit and push them before running this script."
-    exit 1
+  #  exit 1
 fi
 
 # get latest git tag and increase by one (see https://stackoverflow.com/questions/4485399/how-can-i-bump-a-version-number-using-bash)
@@ -47,24 +47,11 @@ function publishNuGet {
   #nuget push $1
 }
 
-function updateAssemblyInfos {
-    DIRECTORY=$1
-    echo "Update AssemblyInfo.cs files:"
-    ASSEMBLY_INFOS=$(find $DIRECTORY -iname "assemblyinfo.cs")
-    for ASSEMBLY_INFO in $ASSEMBLY_INFOS;
-    do
-        echo "Updating $ASSEMBLY_INFO"
-        sed -E -i '' "s/AssemblyVersion.*\(.*\)/AssemblyVersion\(\"$VERSION\"\)/" $ASSEMBLY_INFO
-        sed -E -i '' "s/AssemblyFileVersion.*\(.*\)/AssemblyFileVersion\(\"$VERSION\"\)/" $ASSEMBLY_INFO
-    done
-}
-
 $NUGET restore Xamarin.Piwik.sln || exit 1
-updateAssemblyInfos .
 
 $XBUILD /p:Configuration=Release Xamarin.Piwik.sln || exit 1
 
-pushd packages && nuget install Nunit.Runners && popd
+pushd packages && nuget install NUnit.Console && popd
 export MONO_IOMAP=all # this fixes slash, backslash path seperator problems within nunit test runner
 NUNIT="mono packages/NUnit.ConsoleRunner.*/tools/nunit3-console.exe"
 $NUNIT -config=Release "Tests/Tests.csproj" || exit 1

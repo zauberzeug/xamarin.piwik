@@ -2,10 +2,10 @@
 <package>
   <metadata>
       <id>Xamarin.Piwik</id>
-      <version>0.1.1</version>
+      <version>0.1.3</version>
       <authors>Perpetual Mobile</authors>
       <owners>Perpetual Mobile</owners>
-      <description>Piwik implementation for Xamarin Apps</description>
+      <description>Piwik implementation for Xamarin Apps (HEAD: f6d8d3ed950aa38a9751c439392735414414822a) (HEAD: f6d8d3ed950aa38a9751c439392735414414822a)</description>
       <copyright>Perpetual Mobile Copyright 2017</copyright>
       <dependencies>
          <group>
