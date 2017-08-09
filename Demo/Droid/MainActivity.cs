@@ -7,6 +7,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using PerpetualEngine.Storage;
 
 namespace Demo.Droid
 {
@@ -15,6 +16,8 @@ namespace Demo.Droid
     {
         protected override void OnCreate(Bundle bundle)
         {
+            SimpleStorage.SetContext(this);
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
