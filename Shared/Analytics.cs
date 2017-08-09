@@ -15,6 +15,8 @@ namespace Xamarin.Piwik
         string apiUrl;
         ActionBuffer actions;
         NameValueCollection baseParameters;
+        NameValueCollection pageParameters;
+
         HttpClient httpClient = new HttpClient();
         Random random = new Random();
         SimpleStorage storage = SimpleStorage.EditGroup("xamarin.piwik");
@@ -23,8 +25,7 @@ namespace Xamarin.Piwik
 
         public Analytics(string apiUrl, int siteId)
         {
-
-            var visitor = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16).ToUpper();
+            var visitor = GenerateId(16);
             if (storage.HasKey("visitor_id"))
                 visitor = storage.Get("visitor_id");
             else {
@@ -36,6 +37,9 @@ namespace Xamarin.Piwik
             baseParameters["idsite"] = siteId.ToString();
             baseParameters["_id"] = visitor;
             baseParameters["cid"] = visitor;
+
+            pageParameters = HttpUtility.ParseQueryString(string.Empty);
+
             actions = new ActionBuffer(baseParameters);
 
             httpClient.Timeout = TimeSpan.FromSeconds(30);
@@ -61,9 +65,43 @@ namespace Xamarin.Piwik
         /// <param name="path">path which led to the page (eg. "/settings/language"), default is "/"</param>
         public void TrackPage(string name, string path = "/")
         {
+            pageParameters["pv_id"] = GenerateId(6);
+            pageParameters["url"] = $"{AppUrl}{path}";
+
             var parameters = CreateParameters();
             parameters["action_name"] = name;
-            parameters["url"] = $"{AppUrl}{path}";
+
+            parameters.Add(pageParameters);
+
+            lock (actions)
+                actions.Add(parameters);
+        }
+
+        /// <summary>
+        /// Tracks an page related event.
+        /// </summary>
+        /// <param name="name">event name (eg. "play", "refresh", etc)</param>
+        public void TrackPageEvent(string name)
+        {
+            var parameters = CreateParameters();
+            parameters["action_name"] = name;
+            parameters["url"] = $"{AppUrl}";
+
+            parameters.Add(pageParameters);
+
+            lock (actions)
+                actions.Add(parameters);
+        }
+
+        /// <summary>
+        /// Tracks an non-page related event.
+        /// </summary>
+        /// <param name="name">event name (eg. "Auto-Update", "DB cleanup", etc)</param>
+        public void TrackEvent(string name)
+        {
+            var parameters = CreateParameters();
+            parameters["action_name"] = name;
+            parameters["url"] = $"{AppUrl}";
 
             lock (actions)
                 actions.Add(parameters);
@@ -116,6 +154,9 @@ namespace Xamarin.Piwik
                 Console.WriteLine(msg.ToString());
         }
 
-
+        private static string GenerateId(int length)
+        {
+            return Guid.NewGuid().ToString().Replace("-", "").Substring(0, length).ToUpper();
+        }
     }
 }

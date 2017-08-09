@@ -23,17 +23,28 @@ namespace Demo
                         new Label {
                             HorizontalTextAlignment = TextAlignment.Center,
                             Text = "Xamarin.Piwik Tracker Demo App\n\nBrowse to\nhttps://requestb.in/12xhpcf1?inspect\nto see the api calls"
+                        },
+                        new Button{
+                            Text = "Open SubPage",
+                            Command = new Command(() => {
+                                MainPage.Navigation.PushAsync(new PiwikPage{
+                                    Title = "SubPage",
+                                });
+                            }),
                         }
                     }
                 }
             };
 
-            MainPage = new NavigationPage(content);
+            var navigation = new NavigationPage(content);
+            navigation.Pushed += (sender, e) => TrackCurrentPage();
+            navigation.Popped += (sender, e) => TrackCurrentPage();
+            MainPage = navigation;
         }
 
         protected override void OnStart()
         {
-            // Handle when your app starts
+            TrackCurrentPage();
         }
 
         protected override void OnSleep()
@@ -42,6 +53,11 @@ namespace Demo
         }
 
         protected override void OnResume()
+        {
+            TrackCurrentPage();
+        }
+
+        void TrackCurrentPage()
         {
             var path = "/" + string.Join("/", MainPage.Navigation.NavigationStack.Select(p => p.Title).ToArray());
             Analytics.TrackPage(MainPage.Navigation.NavigationStack.First().Title, path);
