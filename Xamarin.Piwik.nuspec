@@ -5,7 +5,7 @@
       <version>0.1.3</version>
       <authors>Perpetual Mobile</authors>
       <owners>Perpetual Mobile</owners>
-      <description>Piwik implementation for Xamarin Apps (HEAD: f6d8d3ed950aa38a9751c439392735414414822a) (HEAD: f6d8d3ed950aa38a9751c439392735414414822a)</description>
+      <description>Piwik implementation for Xamarin Apps</description>
       <copyright>Perpetual Mobile Copyright 2017</copyright>
       <dependencies>
          <group>
@@ -15,7 +15,7 @@
   </metadata>
     <files>
         <file src="iOS/bin/Release/Xamarin.Piwik.iOS.dll" target="lib\Xamarin.iOS10" />
-		    <!--file src="Droid/bin/Release/Xamarin.Piwik.Android.dll" target="lib\MonoAndroid" /-->
+		    <file src="Droid/bin/Release/Xamarin.Piwik.Droid.dll" target="lib\MonoAndroid" />
         <file src="Tests/bin/Release/Xamarin.Piwik.Tests.dll" target="lib\net45" />
     </files>
 </package>
