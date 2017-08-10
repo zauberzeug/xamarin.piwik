@@ -40,7 +40,7 @@ namespace Xamarin.Piwik
 
             pageParameters = HttpUtility.ParseQueryString(string.Empty);
 
-            actions = new ActionBuffer(baseParameters);
+            actions = new ActionBuffer(baseParameters,storage);
 
             httpClient.Timeout = TimeSpan.FromSeconds(30);
 
@@ -110,34 +110,36 @@ namespace Xamarin.Piwik
         public void LeavingTheApp()
         {
             TrackPage("Close");
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Dispatch();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         public async Task Dispatch() // TODO run in background: http://arteksoftware.com/backgrounding-with-xamarin-forms/
         {
-            var actionsToDispatch = actions;
-            lock (actionsToDispatch) {
-                if (actionsToDispatch.Count == 0)
+            var actionsToDispatch = "";
+            lock (actions) {
+                if (actions.Count == 0)
                     return;
-                actions = new ActionBuffer(baseParameters); // new action buffer to gather tracking infos while we dispatch
+                actionsToDispatch = actions.CreateOutbox(); // new action buffer to store tracking infos while we dispatch
             }
 
             Log(actionsToDispatch);
-            var content = new StringContent(actionsToDispatch.ToString(), Encoding.UTF8, "application/json");
+            var content = new StringContent(actionsToDispatch, Encoding.UTF8, "application/json");
 
             try {
                 var response = await httpClient.PostAsync(apiUrl, content);
-                if (response.StatusCode == HttpStatusCode.OK)
+                if (response.StatusCode == HttpStatusCode.OK){
+                    lock (actions)
+                        actions.ClearOutbox();
                     return;
+                }
 
                 Log(response);
             } catch (Exception e) {
                 Log(e);
                 httpClient.CancelPendingRequests();
             }
-
-            lock (actions)
-                actions.Prepend(actionsToDispatch); // if dispatching failed, we need to keep the actions
         }
 
         NameValueCollection CreateParameters()
