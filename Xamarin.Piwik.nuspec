@@ -2,7 +2,7 @@
 <package>
   <metadata>
       <id>Xamarin.Piwik</id>
-      <version>0.1.7</version>
+      <version>0.1.8</version>
       <authors>Perpetual Mobile</authors>
       <owners>Perpetual Mobile</owners>
       <description>Piwik implementation for Xamarin Apps</description>
