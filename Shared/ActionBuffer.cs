@@ -11,7 +11,7 @@ namespace Xamarin.Piwik
     public class ActionBuffer
     {
         string baseParameters;
-        List<string> actions = new List<string>();
+        List<string> inbox = new List<string>();
         List<string> outbox = new List<string>();
         SimpleStorage storage;
 
@@ -19,35 +19,45 @@ namespace Xamarin.Piwik
         {
             this.baseParameters = $"?rec=1&apiv=1&{baseParameters}&";
             this.storage = storage;
+
+            inbox = storage.Get<List<string>>("actions_inbox", new List<string>());
+            outbox = storage.Get<List<string>>("actions_outbox", new List<string>());
         }
 
-        public int Count { get { return actions.Count + outbox.Count; } }
+        public int Count { get { return inbox.Count + outbox.Count; } }
 
         public void Add(NameValueCollection parameters)
         {
-            actions.Add(baseParameters + parameters);
-        }
-
-        public void Prepend(ActionBuffer otherActions)
-        {
-            actions.InsertRange(0, otherActions.actions);
-        }
-
-        public void ClearOutbox()
-        {
-            lock (outbox) outbox.Clear();
+            lock (inbox) {
+                inbox.Add(baseParameters + parameters);
+                storage.Put<List<string>>("actions_inbox", inbox);
+            }
         }
 
         public string CreateOutbox()
         {
-            lock (outbox) lock (actions) {
-                    outbox.AddRange(actions);
-                    actions.Clear();
+            lock (outbox) lock (inbox) {
+                    outbox.AddRange(inbox);
+                    if (outbox.Count == 0)
+                        return "";
+
+                    inbox.Clear();
+                    storage.Put<List<string>>("actions_inbox", inbox);
+                    storage.Put<List<string>>("actions_outbox", outbox);
                 }
 
             var data = new Dictionary<string, object>();
             data["requests"] = outbox;
             return JsonConvert.SerializeObject(data);
         }
+
+        public void ClearOutbox()
+        {
+            lock (outbox) {
+                outbox.Clear();
+                storage.Put<List<string>>("actions_outbox", outbox);
+            }
+        }
+
     }
 }

@@ -11,7 +11,7 @@ namespace Demo
 
         public App()
         {
-            Analytics = new Analytics("https://requestb.in/12xhpcf1", 13);
+            Analytics = new Analytics("http://mockbin.org/bin/9ac466a2-313c-4691-bf74-f15b9ab602b2", 13);
             Analytics.Verbose = true;
             Analytics.AppUrl = "http://demoapp";
 
@@ -22,7 +22,7 @@ namespace Demo
                     Children = {
                         new Label {
                             HorizontalTextAlignment = TextAlignment.Center,
-                            Text = "Xamarin.Piwik Tracker Demo App\n\nBrowse to\nhttps://requestb.in/12xhpcf1?inspect\nto see the api calls"
+                            Text = "Xamarin.Piwik Tracker Demo App\n\nBrowse to\nhttps://goo.gl/tHhz23\nto see the api calls"
                         },
                         new Button{
                             Text = "Open SubPage",

@@ -33,6 +33,21 @@ namespace Xamarin.Piwik.Tests
             Assert.That(actions.Count, Is.EqualTo(0));
         }
 
+        [Test()]
+        public void TestPersistence()
+        {
+            var actions1 = new ActionBuffer(CreateParameters(), storage);
+            actions1.Add(CreateParameters());
+
+            var actions2 = new ActionBuffer(CreateParameters(), storage);
+            Assert.That(actions2.Count, Is.EqualTo(1));
+
+            Assert.That(actions1.CreateOutbox(), Does.Contain("requests"));
+            Assert.That(actions2.CreateOutbox(), Does.Contain("requests"));
+
+
+        }
+
         NameValueCollection CreateParameters()
         {
             var parameters = HttpUtility.ParseQueryString(string.Empty);

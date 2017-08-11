@@ -32,7 +32,7 @@ namespace Xamarin.Piwik
                 storage.Put("visitor_id", visitor);
             }
 
-            this.apiUrl = apiUrl.StartsWith("https://requestb.in") ? apiUrl : $"{apiUrl}/piwik.php"; // requestb.in can be used for testing and debugging
+            this.apiUrl = $"{apiUrl}/piwik.php";
             baseParameters = HttpUtility.ParseQueryString(string.Empty);
             baseParameters["idsite"] = siteId.ToString();
             baseParameters["_id"] = visitor;
@@ -40,7 +40,7 @@ namespace Xamarin.Piwik
 
             pageParameters = HttpUtility.ParseQueryString(string.Empty);
 
-            actions = new ActionBuffer(baseParameters,storage);
+            actions = new ActionBuffer(baseParameters, storage);
 
             httpClient.Timeout = TimeSpan.FromSeconds(30);
 
@@ -129,7 +129,7 @@ namespace Xamarin.Piwik
 
             try {
                 var response = await httpClient.PostAsync(apiUrl, content);
-                if (response.StatusCode == HttpStatusCode.OK){
+                if (response.StatusCode == HttpStatusCode.OK) {
                     lock (actions)
                         actions.ClearOutbox();
                     return;
