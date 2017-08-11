@@ -66,6 +66,8 @@ namespace Xamarin.Piwik
         /// <param name="path">path which led to the page (eg. "/settings/language"), default is "/"</param>
         public void TrackPage(string name, string path = "/")
         {
+            Log($"[Page] {name}");
+
             pageParameters["pv_id"] = GenerateId(6);
             pageParameters["url"] = $"{AppUrl}{path}";
 
@@ -84,6 +86,8 @@ namespace Xamarin.Piwik
         /// <param name="name">event name (eg. "play", "refresh", etc)</param>
         public void TrackPageEvent(string name)
         {
+            Log($"[PageEvent] {name}");
+
             var parameters = CreateParameters();
             parameters["action_name"] = name;
 
@@ -99,6 +103,7 @@ namespace Xamarin.Piwik
         /// <param name="name">event name (eg. "Auto-Update", "DB cleanup", etc)</param>
         public void TrackEvent(string name)
         {
+            Log($"[Event] {name}");
             var parameters = CreateParameters();
             parameters["action_name"] = name;
             parameters["url"] = $"{AppUrl}";
@@ -115,6 +120,7 @@ namespace Xamarin.Piwik
         /// <param name="category">categroy (eg. "cats")</param>
         public void TrackSearch(string query, int resultCount, string category = null)
         {
+            Log($"[Search] {query} {resultCount} {category}");
             var parameters = CreateParameters();
             parameters["search"] = query;
             parameters["search_count"] = resultCount.ToString();
@@ -147,7 +153,7 @@ namespace Xamarin.Piwik
                 actionsToDispatch = actions.CreateOutbox(); // new action buffer to store tracking infos while we dispatch
             }
 
-            Log(actionsToDispatch);
+            Log($"[Dispatching] {actionsToDispatch}");
             var content = new StringContent(actionsToDispatch, Encoding.UTF8, "application/json");
 
             try {
@@ -158,7 +164,7 @@ namespace Xamarin.Piwik
                     return;
                 }
 
-                Log(response);
+                Log($"[Error] {response}");
             } catch (Exception e) {
                 Log(e);
                 httpClient.CancelPendingRequests();
@@ -182,7 +188,7 @@ namespace Xamarin.Piwik
         void Log(object msg)
         {
             if (Verbose)
-                Console.WriteLine(msg.ToString());
+                Console.WriteLine($"[Analytics] {msg}");
         }
 
         private static string GenerateId(int length)
