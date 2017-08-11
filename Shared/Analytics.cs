@@ -187,7 +187,7 @@ namespace Xamarin.Piwik
 
         void Log(object msg)
         {
-            if (Verbose)
+            if (Verbose && !actions.OptOut)
                 Console.WriteLine($"[Analytics] {msg}");
         }
 
