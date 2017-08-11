@@ -2,7 +2,7 @@
 <package>
   <metadata>
       <id>Xamarin.Piwik</id>
-      <version>0.1.9</version>
+      <version>0.1.10</version>
       <authors>Perpetual Mobile</authors>
       <owners>Perpetual Mobile</owners>
       <description>Piwik implementation for Xamarin Apps</description>
@@ -15,7 +15,10 @@
   </metadata>
     <files>
         <file src="iOS/bin/Release/Xamarin.Piwik.iOS.dll" target="lib/Xamarin.iOS10" />
-		    <file src="Droid/bin/Release/Xamarin.Piwik.Droid.dll" target="lib/MonoAndroid" />
+        <file src="iOS/bin/Release/Xamarin.Piwik.iOS.xml" target="lib/Xamarin.iOS10" />
+        <file src="Droid/bin/Release/Xamarin.Piwik.Droid.dll" target="lib/MonoAndroid" />
+		    <file src="Droid/bin/Release/Xamarin.Piwik.Droid.xml" target="lib/MonoAndroid" />
         <file src="Tests/bin/Release/Xamarin.Piwik.Tests.dll" target="lib/net45" />
+        <file src="Tests/bin/Release/Xamarin.Piwik.Tests.xml" target="lib/net45" />
     </files>
 </package>
