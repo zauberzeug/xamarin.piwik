@@ -86,7 +86,6 @@ namespace Xamarin.Piwik
         {
             var parameters = CreateParameters();
             parameters["action_name"] = name;
-            parameters["url"] = $"{AppUrl}";
 
             parameters.Add(pageParameters);
 
@@ -108,6 +107,29 @@ namespace Xamarin.Piwik
                 actions.Add(parameters);
         }
 
+        /// <summary>
+        /// Tracks a search query.
+        /// </summary>
+        /// <param name="query">search query (eg. "cats")</param>
+        /// <param name="resultCount">number of search results displayed to the user</param>
+        /// <param name="category">categroy (eg. "cats")</param>
+        public void TrackSearch(string query, int resultCount, string category = null)
+        {
+            var parameters = CreateParameters();
+            parameters["search"] = query;
+            parameters["search_count"] = resultCount.ToString();
+            if (category != null)
+                parameters["search_cat"] = category;
+
+            parameters.Add(pageParameters);
+
+            lock (actions)
+                actions.Add(parameters);
+        }
+
+        /// <summary>
+        /// Track an App exit. Needed to acuratly time the visibility of last page and triggers an Dispatch().
+        /// </summary>
         public void LeavingTheApp()
         {
             TrackPage("Close");
