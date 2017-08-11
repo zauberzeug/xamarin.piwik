@@ -44,7 +44,7 @@ namespace Xamarin.Piwik
 
             httpClient.Timeout = TimeSpan.FromSeconds(30);
 
-            timer.Interval = TimeSpan.FromSeconds(10).TotalMilliseconds;
+            timer.Interval = TimeSpan.FromMinutes(2).TotalMilliseconds;
             timer.Elapsed += async (s, args) => await Dispatch();
             timer.Start();
         }
