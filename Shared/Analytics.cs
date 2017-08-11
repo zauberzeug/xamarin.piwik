@@ -7,6 +7,7 @@ using System.Text;
 using System.Net;
 using PerpetualEngine.Storage;
 using System.Timers;
+using System.Globalization;
 
 namespace Xamarin.Piwik
 {
@@ -152,6 +153,7 @@ namespace Xamarin.Piwik
             var parameters = HttpUtility.ParseQueryString(string.Empty);
             parameters["rand"] = random.Next().ToString();
             parameters["cdt"] = (DateTimeOffset.UtcNow.ToUnixTimeSeconds()).ToString(); // TODO dispatching cdt older thant 24 h needs token_auth in bulk request
+            parameters["lang"] = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
             return parameters;
         }
 
