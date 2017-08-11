@@ -28,6 +28,9 @@ namespace Xamarin.Piwik
 
         public void Add(NameValueCollection parameters)
         {
+            if (OptOut)
+                return;
+
             lock (inbox) {
                 inbox.Add(baseParameters + parameters);
                 storage.Put<List<string>>("actions_inbox", inbox);
@@ -59,5 +62,20 @@ namespace Xamarin.Piwik
             }
         }
 
+        public bool OptOut {
+            get => storage.Get<bool>("opt_out", false);
+            set {
+                storage.Put<bool>("opt_out", value);
+
+                if (value)
+                    lock (outbox)
+                        lock (inbox) {
+                            inbox.Clear();
+                            outbox.Clear();
+                            storage.Put<List<string>>("actions_inbox", inbox);
+                            storage.Put<List<string>>("actions_outbox", outbox);
+                        }
+            }
+        }
     }
 }

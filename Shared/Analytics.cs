@@ -142,6 +142,11 @@ namespace Xamarin.Piwik
             }
         }
 
+        public bool OptOut {
+            get => actions.OptOut;
+            set => actions.OptOut = value;
+        }
+
         NameValueCollection CreateParameters()
         {
             var parameters = HttpUtility.ParseQueryString(string.Empty);

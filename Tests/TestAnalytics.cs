@@ -12,13 +12,29 @@ namespace Xamarin.Piwik.Tests
     [TestFixture()]
     public class TestAnalytics
     {
+        Analytics analytics;
+        string url;
+
+        [SetUp]
+        public void Setup()
+        {
+            url = GetLocalhostAddress();
+            analytics = new Analytics(url, 3);
+            analytics.Verbose = true;
+            analytics.OptOut = false;
+            Assert.That(analytics.UnsentActions, Is.EqualTo(0));
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            analytics.OptOut = true; // resetting persistence
+            Assert.That(analytics.UnsentActions, Is.EqualTo(0));
+        }
+
         [Test()]
         public async Task TestTrackingPageVisits()
         {
-            var url = GetLocalhostAddress();
-            var analytics = new Analytics(url, 3);
-            analytics.Verbose = true;
-
             analytics.TrackPage("Main");
             analytics.TrackPage("LevelA / Sub");
 
@@ -36,10 +52,6 @@ namespace Xamarin.Piwik.Tests
         [Test()]
         public async Task TestServerErrorWhileDispatching()
         {
-            var url = GetLocalhostAddress();
-            var analytics = new Analytics(url, 3);
-            analytics.Verbose = true;
-
             analytics.TrackPage("Main");
 
             var receivedData = MockedPiwikServer(url, statusCode: 500);
@@ -56,15 +68,10 @@ namespace Xamarin.Piwik.Tests
         [Test()]
         public async Task TestConnectionErrorWhileDispatching()
         {
-            var url = GetLocalhostAddress();
-            var analytics = new Analytics(url, 3);
-            analytics.Verbose = true;
-
             analytics.TrackPage("Main");
 
             await analytics.Dispatch();
             Assert.That(analytics.UnsentActions, Is.EqualTo(1));
-
 
             var receivedData = MockedPiwikServer(url);
             Thread.Sleep(100); // delay before dispaching to make sure the mocked server has opend the port
@@ -72,6 +79,18 @@ namespace Xamarin.Piwik.Tests
             await receivedData;
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
 
+        }
+
+        [Test()]
+        public void TestOptOut()
+        {
+            analytics.TrackPage("Main");
+            Assert.That(analytics.UnsentActions, Is.EqualTo(1));
+
+            analytics.OptOut = true;
+            analytics.TrackPage("Main2");
+
+            Assert.That(analytics.UnsentActions, Is.EqualTo(0));
         }
 
         Task<string> MockedPiwikServer(string url, int statusCode = 200)
