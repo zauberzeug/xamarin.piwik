@@ -11,7 +11,7 @@ using System.Globalization;
 
 namespace Xamarin.Piwik
 {
-    public class Analytics
+    public partial class Analytics
     {
         string apiUrl;
         ActionBuffer actions;
@@ -182,6 +182,7 @@ namespace Xamarin.Piwik
             parameters["rand"] = random.Next().ToString();
             parameters["cdt"] = (DateTimeOffset.UtcNow.ToUnixTimeSeconds()).ToString(); // TODO dispatching cdt older thant 24 h needs token_auth in bulk request
             parameters["lang"] = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+            parameters["ua"] = UserAgent;
             return parameters;
         }
 
