@@ -8,6 +8,7 @@ using System.Net;
 using PerpetualEngine.Storage;
 using System.Timers;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace Xamarin.Piwik
 {
@@ -53,6 +54,8 @@ namespace Xamarin.Piwik
         public bool Verbose { get; set; } = false;
 
         public int UnsentActions { get { lock (actions) return actions.Count; } }
+
+        public List<Dimension> Dimensions = new List<Dimension>();
 
         /// <summary>
         /// The base url used by the app (piwi's url parameter). Default is http://app
@@ -183,6 +186,10 @@ namespace Xamarin.Piwik
             parameters["cdt"] = (DateTimeOffset.UtcNow.ToUnixTimeSeconds()).ToString(); // TODO dispatching cdt older thant 24 h needs token_auth in bulk request
             parameters["lang"] = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
             parameters["ua"] = UserAgent;
+
+            foreach (var dimension in Dimensions)
+                parameters[$"dimension{dimension.Id}"] = dimension.Value;
+
             return parameters;
         }
 

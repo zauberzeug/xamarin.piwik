@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="TestAnalytics.cs" />
     <Compile Include="TestActionBuffer.cs" />
+    <Compile Include="Analytics.Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
