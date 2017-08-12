@@ -9,6 +9,7 @@ using PerpetualEngine.Storage;
 using System.Timers;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Xamarin.Piwik
 {
@@ -56,6 +57,11 @@ namespace Xamarin.Piwik
         public int UnsentActions { get { lock (actions) return actions.Count; } }
 
         public List<Dimension> Dimensions = new List<Dimension>();
+
+        public void UpdateDimension(string name, string newValue)
+        {
+            Dimensions.First(d => d.Name == name).Value = newValue;
+        }
 
         /// <summary>
         /// The base url used by the app (piwi's url parameter). Default is http://app
