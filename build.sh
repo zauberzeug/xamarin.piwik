@@ -41,7 +41,9 @@ function publishNuGet {
 
 $NUGET restore Xamarin.Piwik.sln || exit 1
 
-$XBUILD /p:Configuration=Release Xamarin.Piwik.sln || exit 1
+$XBUILD /p:Configuration=Release Droid/Droid.csproj || exit 1
+$XBUILD /p:Configuration=Release iOS/iOS.csproj || exit 1
+$XBUILD /p:Configuration=Release Tests/Tests.csproj || exit 1
 
 pushd packages && nuget install NUnit.Console && popd
 export MONO_IOMAP=all # this fixes slash, backslash path seperator problems within nunit test runner
