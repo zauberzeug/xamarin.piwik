@@ -35,8 +35,7 @@ function publishNuGet {
   git push
   git push --tags
 
-  echo "not publishing to nuget.org yet"
-  #nuget push $1
+  nuget push $1
 }
 
 $NUGET restore Xamarin.Piwik.sln || exit 1
