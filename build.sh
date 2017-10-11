@@ -52,4 +52,4 @@ NUNIT="mono packages/NUnit.ConsoleRunner.*/tools/nunit3-console.exe"
 $NUNIT -config=Release "Tests/Tests.csproj" || exit 1
 
 packNuGet Xamarin.Piwik.nuspec
-publishNuGet Xamarin.Piwik.$VERSION-pre.nupkg
+publishNuGet Xamarin.Piwik.$VERSION.nupkg
