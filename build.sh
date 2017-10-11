@@ -30,11 +30,11 @@ function packNuGet {
 }
 
 function publishNuGet {
-  git add $1
-  git commit -am "nuget package ${VERSION}" || exit 1
+#  git add $1
+#  git commit -am "nuget package ${VERSION}" || exit 1
   git tag -a $VERSION -m ''  || exit 1
 
-  git push
+#  git push
   git push --tags
 
   nuget push $1
