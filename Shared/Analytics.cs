@@ -92,15 +92,13 @@ namespace Xamarin.Piwik
         /// <summary>
         /// Tracks an page related event.
         /// </summary>
-        /// <param name="name">event name (eg. "play", "refresh", etc)</param>
-        public void TrackPageEvent(string name)
+        /// <param name="category">event category ("Music", "Video", etc)</param>
+        /// <param name="action">event action ("Play", "Pause", etc)</param>
+        /// <param name="name">optional event name (eg. song title, file name, etc)</param>
+        /// <param name="value">optional event value (eg. position in song, count of manual updates, etc)</param>
+        public void TrackPageEvent(string category, string action, string name = null, int? value = null)
         {
-            Log($"[PageEvent] {name}");
-
-            var parameters = CreateParameters();
-            parameters["action_name"] = name;
-
-            parameters.Add(pageParameters);
+            var parameters = CreateEventParemeters(category, action, name, value);
 
             lock (actions)
                 actions.Add(parameters);
@@ -109,16 +107,29 @@ namespace Xamarin.Piwik
         /// <summary>
         /// Tracks an non-page related event.
         /// </summary>
-        /// <param name="name">event name (eg. "Auto-Update", "DB cleanup", etc)</param>
-        public void TrackEvent(string name)
+        /// <param name="category">event category ("Music", "Video", etc)</param>
+        /// <param name="action">event action ("Play", "Pause", etc)</param>
+        /// <param name="name">optional event name (eg. song title, file name, etc)</param>
+        /// <param name="value">optional event value (eg. position in song, count of manual updates, etc)</param>
+        public void TrackEvent(string category, string action, string name = null, int? value = null)
         {
-            Log($"[Event] {name}");
-            var parameters = CreateParameters();
-            parameters["action_name"] = name;
-            parameters["url"] = $"{AppUrl}";
+            var parameters = CreateEventParemeters(category, action, name, value);
 
             lock (actions)
                 actions.Add(parameters);
+        }
+
+        private NameValueCollection CreateEventParemeters(string category, string action, string name, int? value)
+        {
+            Log($"[Event] category: {category}, action:{action}, name:{name}, value:{value}");
+            var parameters = CreateParameters();
+            parameters["e_c"] = category;
+            parameters["e_a"] = action;
+            if (name != null)
+                parameters["e_n"] = name;
+            if (value != null)
+                parameters["e_v"] = value.ToString();
+            return parameters;
         }
 
         /// <summary>

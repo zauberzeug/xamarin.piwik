@@ -50,6 +50,23 @@ namespace Xamarin.Piwik.Tests
         }
 
         [Test()]
+        public async Task TestTrackEvent()
+        {
+            analytics.TrackEvent("cat", "some action");
+
+            var receivedData = MockedPiwikServer(url);
+            await analytics.Dispatch();
+            Assert.That(analytics.UnsentActions, Is.EqualTo(0));
+
+            var json = JObject.Parse(await receivedData);
+            var main = json["requests"][0].ToString();
+            Assert.That(main, Does.Not.Contain("action_name="), "events do not have an action name (at least in the android sdk)");
+            Assert.That(main, Does.Contain("e_a=some+action"));
+            Assert.That(main, Does.Contain("e_c=cat"));
+        }
+
+
+        [Test()]
         public async Task TestServerErrorWhileDispatching()
         {
             analytics.TrackPage("Main");
