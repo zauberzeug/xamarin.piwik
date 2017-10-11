@@ -6,6 +6,8 @@ if [[ $(git status -s) ]]; then
   #  exit 1
 fi
 
+git fetch --tags
+
 # get latest git tag and increase by one (see https://stackoverflow.com/questions/4485399/how-can-i-bump-a-version-number-using-bash)
 VERSION=`git describe --abbrev=0 | awk -F. '/[0-9]+\./{$NF+=1;OFS=".";print}'`
 
