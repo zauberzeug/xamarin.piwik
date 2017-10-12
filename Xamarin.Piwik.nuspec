@@ -3,10 +3,13 @@
   <metadata>
       <id>Xamarin.Piwik</id>
       <version>0.1.12</version>
-      <authors>Perpetual Mobile</authors>
-      <owners>Perpetual Mobile</owners>
+      <authors>Perpetual Mobile GmbH</authors>
+      <owners>Perpetual Mobile GmbH</owners>
+      <projectUrl>https://github.com/perpetual-mobile/Xamarin.Piwik</projectUrl>
+      <licenseUrl>https://github.com/perpetual-mobile/Xamarin.Piwik/blob/master/LICENSE</licenseUrl>
       <description>Piwik implementation for Xamarin Apps</description>
       <copyright>Perpetual Mobile Copyright 2017</copyright>
+
       <dependencies>
          <group>
              <dependency id="SimpleStorage" version="1.4.2" />
