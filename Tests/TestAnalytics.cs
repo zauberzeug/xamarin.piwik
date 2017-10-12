@@ -60,7 +60,7 @@ namespace Xamarin.Piwik.Tests
 
             var json = JObject.Parse(await receivedData);
             var main = json["requests"][0].ToString();
-            Assert.That(main, Does.Not.Contain("action_name="), "events do not have an action name (at least in the android sdk)");
+            Assert.That(main, Does.Not.Contain("action_name="), "events do not have an action name (checked with javascript and android sdk)");
             Assert.That(main, Does.Contain("e_a=some+action"));
             Assert.That(main, Does.Contain("e_c=cat"));
         }
