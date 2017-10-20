@@ -63,6 +63,7 @@ namespace Xamarin.Piwik.Tests
             Assert.That(main, Does.Not.Contain("action_name="), "events do not have an action name (checked with javascript and android sdk)");
             Assert.That(main, Does.Contain("e_a=some+action"));
             Assert.That(main, Does.Contain("e_c=cat"));
+            Assert.That(main, Does.Contain("url="), "events should always send an url because piwik can be configured to drop data which are not targeted at a specific domain");
         }
 
 

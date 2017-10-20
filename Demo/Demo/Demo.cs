@@ -31,6 +31,10 @@ namespace Demo
                                     Title = "SubPage",
                                 });
                             }),
+                        },
+                        new Button{
+                            Text = "Track Event",
+                            Command = new Command(() => Analytics.TrackEvent("User Action", "Button Pressed")),
                         }
                     }
                 }
