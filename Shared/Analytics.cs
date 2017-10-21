@@ -185,9 +185,9 @@ namespace Xamarin.Piwik
                     return;
                 }
 
-                Log($"[Error] {response}");
+                LogError(response);
             } catch (Exception e) {
-                Log(e);
+                LogError(e);
                 httpClient.CancelPendingRequests();
             }
         }
@@ -216,6 +216,11 @@ namespace Xamarin.Piwik
         {
             if (Verbose && !actions.OptOut)
                 Console.WriteLine($"[Analytics] {msg}");
+        }
+
+        void LogError(object msg)
+        {
+            Console.WriteLine($"[Analytics] [Error] {msg}");
         }
 
         private static string GenerateId(int length)
