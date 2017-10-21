@@ -115,6 +115,7 @@ namespace Xamarin.Piwik
         public void TrackEvent(string category, string action, string name = null, int? value = null)
         {
             var parameters = CreateEventParemeters(category, action, name, value);
+            parameters["url"] = AppUrl; // non-page events must at least have the base url 
 
             lock (actions)
                 actions.Add(parameters);
@@ -200,7 +201,6 @@ namespace Xamarin.Piwik
         NameValueCollection CreateParameters()
         {
             var parameters = HttpUtility.ParseQueryString(string.Empty);
-            parameters["url"] = $"{AppUrl}";
             parameters["rand"] = random.Next().ToString();
             parameters["cdt"] = (DateTimeOffset.UtcNow.ToUnixTimeSeconds()).ToString(); // TODO dispatching cdt older thant 24 h needs token_auth in bulk request
             parameters["lang"] = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
