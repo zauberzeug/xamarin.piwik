@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Xamarin.Piwik.Droid</RootNamespace>
     <AssemblyName>Xamarin.Piwik.Droid</AssemblyName>
-    <TargetFrameworkVersion>v7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v8.0</TargetFrameworkVersion>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
@@ -45,11 +45,11 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="PerpetualEngine.SimpleStorage.Droid">
-      <HintPath>..\packages\SimpleStorage.1.4.2\lib\MonoAndroid\PerpetualEngine.SimpleStorage.Droid.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="PerpetualEngine.SimpleStorage.Droid">
+      <HintPath>..\packages\SimpleStorage.1.4.9\lib\MonoAndroid\PerpetualEngine.SimpleStorage.Droid.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />

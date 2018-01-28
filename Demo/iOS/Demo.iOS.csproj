@@ -97,6 +97,9 @@
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>..\..\packages\Xamarin.Forms.2.3.4.247\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
     </Reference>
+    <Reference Include="PerpetualEngine.SimpleStorage.iOS">
+      <HintPath>..\..\packages\SimpleStorage.1.4.9\lib\Xamarin.iOS10\PerpetualEngine.SimpleStorage.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
