@@ -110,9 +110,38 @@ namespace Xamarin.Piwik
         /// </summary>
         /// <param name="category">event category ("Music", "Video", etc)</param>
         /// <param name="action">event action ("Play", "Pause", etc)</param>
-        /// <param name="name">optional event name (eg. song title, file name, etc)</param>
-        /// <param name="value">optional event value (eg. position in song, count of manual updates, etc)</param>
-        public void TrackEvent(string category, string action, string name = null, int? value = null)
+        public void TrackEvent(string category, string action)
+        {
+            var parameters = CreateEventParemeters(category, action, null, null);
+            parameters["url"] = AppUrl; // non-page events must at least have the base url 
+
+            lock (actions)
+                actions.Add(parameters);
+        }
+
+        /// <summary>
+        /// Tracks an non-page related event.
+        /// </summary>
+        /// <param name="category">event category ("Music", "Video", etc)</param>
+        /// <param name="action">event action ("Play", "Pause", etc)</param>
+        /// <param name="name">event name (eg. song title, file name, etc)</param>
+        public void TrackEvent(string category, string action, string name)
+        {
+            var parameters = CreateEventParemeters(category, action, name, null);
+            parameters["url"] = AppUrl; // non-page events must at least have the base url 
+
+            lock (actions)
+                actions.Add(parameters);
+        }
+
+        /// <summary>
+        /// Tracks an non-page related event.
+        /// </summary>
+        /// <param name="category">event category ("Music", "Video", etc)</param>
+        /// <param name="action">event action ("Play", "Pause", etc)</param>
+        /// <param name="name">event name (eg. song title, file name, etc)</param>
+        /// <param name="value">event value (eg. position in song, count of manual updates, etc)</param>
+        public void TrackEvent(string category, string action, string name, int? value)
         {
             var parameters = CreateEventParemeters(category, action, name, value);
             parameters["url"] = AppUrl; // non-page events must at least have the base url 
