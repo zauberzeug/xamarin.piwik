@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Xamarin.Piwik
 {
-    public partial class Analytics
+    public partial class PiwikAnalytics
     {
         string apiUrl;
         ActionBuffer actions;
@@ -26,7 +26,7 @@ namespace Xamarin.Piwik
 
         Timer timer = new Timer();
 
-        public Analytics(string apiUrl, int siteId)
+        public PiwikAnalytics(string apiUrl, int siteId)
         {
             var visitor = GenerateId(16);
             if (storage.HasKey("visitor_id"))

@@ -12,14 +12,14 @@ namespace Xamarin.Piwik.Tests
     [TestFixture()]
     public class TestAnalytics
     {
-        Analytics analytics;
+        PiwikAnalytics analytics;
         string url;
 
         [SetUp]
         public void Setup()
         {
             url = GetLocalhostAddress();
-            analytics = new Analytics(url, 3);
+            analytics = new PiwikAnalytics(url, 3);
             analytics.Verbose = true;
             analytics.OptOut = false;
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));

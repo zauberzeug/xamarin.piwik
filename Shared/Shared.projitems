@@ -9,7 +9,7 @@
     <Import_RootNamespace>Xamarin.Piwik</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Analytics.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PiwikAnalytics.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ActionBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dimension.cs" />
   </ItemGroup>

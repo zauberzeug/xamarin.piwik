@@ -3,7 +3,7 @@ using Java.Lang;
 using PerpetualEngine.Storage;
 namespace Xamarin.Piwik
 {
-    public partial class Analytics
+    public partial class PiwikAnalytics
     {
         string userAgent;
         string UserAgent {

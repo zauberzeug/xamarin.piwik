@@ -7,11 +7,11 @@ namespace Demo
 {
     public class App : Application
     {
-        public static Analytics Analytics;
+        public static PiwikAnalytics Analytics;
 
         public App()
         {
-            Analytics = new Analytics("http://mockbin.org/bin/9ac466a2-313c-4691-bf74-f15b9ab602b2", 13);
+            Analytics = new PiwikAnalytics("http://mockbin.org/bin/9ac466a2-313c-4691-bf74-f15b9ab602b2", 13);
             Analytics.Verbose = true;
             Analytics.AppUrl = "http://demoapp";
 
