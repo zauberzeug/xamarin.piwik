@@ -112,11 +112,7 @@ namespace Xamarin.Piwik
         /// <param name="action">event action ("Play", "Pause", etc)</param>
         public void TrackEvent(string category, string action)
         {
-            var parameters = CreateEventParemeters(category, action, null, null);
-            parameters["url"] = AppUrl; // non-page events must at least have the base url 
-
-            lock (actions)
-                actions.Add(parameters);
+            TrackEvent(category, action, null, null);
         }
 
         /// <summary>
@@ -127,11 +123,7 @@ namespace Xamarin.Piwik
         /// <param name="name">event name (eg. song title, file name, etc)</param>
         public void TrackEvent(string category, string action, string name)
         {
-            var parameters = CreateEventParemeters(category, action, name, null);
-            parameters["url"] = AppUrl; // non-page events must at least have the base url 
-
-            lock (actions)
-                actions.Add(parameters);
+            TrackEvent(category, action, name, null);
         }
 
         /// <summary>
