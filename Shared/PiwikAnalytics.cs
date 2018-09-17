@@ -219,6 +219,8 @@ namespace Xamarin.Piwik
             set => actions.OptOut = value;
         }
 
+        public void ClearQueue() => actions.Clear();
+
         NameValueCollection CreateParameters()
         {
             var parameters = HttpUtility.ParseQueryString(string.Empty);
@@ -244,7 +246,7 @@ namespace Xamarin.Piwik
             Console.WriteLine($"[Analytics] [Error] {msg}");
         }
 
-        private static string GenerateId(int length)
+        static string GenerateId(int length)
         {
             return Guid.NewGuid().ToString().Replace("-", "").Substring(0, length).ToUpper();
         }

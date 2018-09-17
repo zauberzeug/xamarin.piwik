@@ -107,7 +107,9 @@ namespace Xamarin.Piwik.Tests
 
             analytics.OptOut = true;
             analytics.TrackPage("Main2");
+            Assert.That(analytics.UnsentActions, Is.EqualTo(1));
 
+            analytics.ClearQueue();
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
         }
 

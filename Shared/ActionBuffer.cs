@@ -62,20 +62,20 @@ namespace Xamarin.Piwik
             }
         }
 
+        public void Clear()
+        {
+            lock (outbox) // NOTE we atain a lock for both objects before clearing.
+                lock (inbox) {
+                    inbox.Clear();
+                    outbox.Clear();
+                    storage.Put<List<string>>("actions_inbox", inbox);
+                    storage.Put<List<string>>("actions_outbox", outbox);
+                }
+        }
+
         public bool OptOut {
             get => storage.Get<bool>("opt_out", false);
-            set {
-                storage.Put<bool>("opt_out", value);
-
-                if (value)
-                    lock (outbox)
-                        lock (inbox) {
-                            inbox.Clear();
-                            outbox.Clear();
-                            storage.Put<List<string>>("actions_inbox", inbox);
-                            storage.Put<List<string>>("actions_outbox", outbox);
-                        }
-            }
+            set => storage.Put<bool>("opt_out", value);
         }
     }
 }
