@@ -44,11 +44,11 @@ namespace Xamarin.Piwik.Tests
             }, token);
         }
 
-        public static async Task<string> SubmitAndReceive(PiwikAnalytics analytics, string url)
+        public static async Task<string> SubmitAndReceive(PiwikAnalytics analytics, string url, int statusCode = 200)
         {
             var tokenSource = new CancellationTokenSource();
 
-            var receivedData = PiwikMocker.Receive(url, tokenSource.Token);
+            var receivedData = PiwikMocker.Receive(url, tokenSource.Token, statusCode);
             var dispatched = await analytics.Dispatch();
             if (dispatched)
                 return await receivedData;

@@ -38,11 +38,10 @@ namespace Xamarin.Piwik.Tests
             analytics.TrackPage("Main");
             analytics.TrackPage("LevelA / Sub");
 
-            var receivedData = PiwikMocker.Receive(url);
-            await analytics.Dispatch();
+            var receivedData = await PiwikMocker.SubmitAndReceive(analytics, url);
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
 
-            var json = JObject.Parse(await receivedData);
+            var json = JObject.Parse(receivedData);
             var main = json["requests"][0].ToString();
             Assert.That(main, Does.Contain("action_name=Main"));
             var sub = json["requests"][1].ToString();
@@ -54,11 +53,10 @@ namespace Xamarin.Piwik.Tests
         {
             analytics.TrackEvent("cat", "some action");
 
-            var receivedData = PiwikMocker.Receive(url);
-            await analytics.Dispatch();
+            var receivedData = await PiwikMocker.SubmitAndReceive(analytics, url);
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
 
-            var json = JObject.Parse(await receivedData);
+            var json = JObject.Parse(receivedData);
             var main = json["requests"][0].ToString();
             Assert.That(main, Does.Not.Contain("action_name="), "events do not have an action name (checked with javascript and android sdk)");
             Assert.That(main, Does.Contain("e_a=some+action"));
@@ -81,14 +79,11 @@ namespace Xamarin.Piwik.Tests
         {
             analytics.TrackPage("Main");
 
-            var receivedData = PiwikMocker.Receive(url, statusCode: 500);
-            await analytics.Dispatch();
-            await receivedData;
+            var receivedData = await PiwikMocker.SubmitAndReceive(analytics, url, statusCode: 500);
             Assert.That(analytics.UnsentActions, Is.EqualTo(1));
 
-            receivedData = PiwikMocker.Receive(url);
+            receivedData = await PiwikMocker.SubmitAndReceive(analytics, url);
             await analytics.Dispatch();
-            await receivedData;
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
         }
 
@@ -105,7 +100,6 @@ namespace Xamarin.Piwik.Tests
             await analytics.Dispatch();
             await receivedData;
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
-
         }
 
         [Test()]
