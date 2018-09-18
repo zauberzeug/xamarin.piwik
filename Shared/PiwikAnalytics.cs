@@ -187,12 +187,12 @@ namespace Xamarin.Piwik
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
-        public async Task Dispatch() // TODO run in background: http://arteksoftware.com/backgrounding-with-xamarin-forms/
+        public async Task<bool> Dispatch() // TODO run in background: http://arteksoftware.com/backgrounding-with-xamarin-forms/
         {
             var actionsToDispatch = "";
             lock (actions) {
                 if (actions.Count == 0)
-                    return;
+                    return false;
                 actionsToDispatch = actions.CreateOutbox(); // new action buffer to store tracking infos while we dispatch
             }
 
@@ -204,7 +204,7 @@ namespace Xamarin.Piwik
                 if (response.StatusCode == HttpStatusCode.OK) {
                     lock (actions)
                         actions.ClearOutbox();
-                    return;
+                    return true;
                 }
 
                 LogError(response);
@@ -212,6 +212,7 @@ namespace Xamarin.Piwik
                 LogError(e);
                 httpClient.CancelPendingRequests();
             }
+            return false;
         }
 
         public bool OptOut {

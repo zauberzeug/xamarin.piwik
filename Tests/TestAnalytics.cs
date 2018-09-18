@@ -38,7 +38,7 @@ namespace Xamarin.Piwik.Tests
             analytics.TrackPage("Main");
             analytics.TrackPage("LevelA / Sub");
 
-            var receivedData = MockedPiwikServer(url);
+            var receivedData = PiwikMocker.Receive(url);
             await analytics.Dispatch();
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
 
@@ -54,7 +54,7 @@ namespace Xamarin.Piwik.Tests
         {
             analytics.TrackEvent("cat", "some action");
 
-            var receivedData = MockedPiwikServer(url);
+            var receivedData = PiwikMocker.Receive(url);
             await analytics.Dispatch();
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
 
@@ -66,18 +66,27 @@ namespace Xamarin.Piwik.Tests
             Assert.That(main, Does.Contain("url="), "events should always send an url because piwik can be configured to drop data which are not targeted at a specific domain");
         }
 
+        [Test()]
+        public async Task TestCallingDispatchWithoutNewEvents()
+        {
+            var payload = await PiwikMocker.SubmitAndReceive(analytics, url);
+            Assert.That(payload, Is.Empty);
+            analytics.TrackPage("Main");
+            payload = await PiwikMocker.SubmitAndReceive(analytics, url);
+            Assert.That(payload, Is.Not.Empty);
+        }
 
         [Test()]
         public async Task TestServerErrorWhileDispatching()
         {
             analytics.TrackPage("Main");
 
-            var receivedData = MockedPiwikServer(url, statusCode: 500);
+            var receivedData = PiwikMocker.Receive(url, statusCode: 500);
             await analytics.Dispatch();
             await receivedData;
             Assert.That(analytics.UnsentActions, Is.EqualTo(1));
 
-            receivedData = MockedPiwikServer(url);
+            receivedData = PiwikMocker.Receive(url);
             await analytics.Dispatch();
             await receivedData;
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
@@ -91,7 +100,7 @@ namespace Xamarin.Piwik.Tests
             await analytics.Dispatch();
             Assert.That(analytics.UnsentActions, Is.EqualTo(1));
 
-            var receivedData = MockedPiwikServer(url);
+            var receivedData = PiwikMocker.Receive(url);
             Thread.Sleep(100); // delay before dispaching to make sure the mocked server has opend the port
             await analytics.Dispatch();
             await receivedData;
@@ -111,39 +120,6 @@ namespace Xamarin.Piwik.Tests
 
             analytics.ClearQueue();
             Assert.That(analytics.UnsentActions, Is.EqualTo(0));
-        }
-
-        Task<string> MockedPiwikServer(string url, int statusCode = 200)
-        {
-            return Task.Run(() => {
-                HttpListener listener = new HttpListener();
-                listener.Prefixes.Add(url);
-                listener.Start();
-
-                // GetContext method blocks while waiting for a request. 
-                HttpListenerContext context = listener.GetContext();
-
-                var body = new StreamReader(context.Request.InputStream).ReadToEnd();
-
-                HttpListenerResponse response = context.Response;
-
-                try {
-                    response.StatusCode = statusCode;
-                    Stream stream = response.OutputStream;
-                    using (var writer = new StreamWriter(stream))
-                        writer.Write("");
-
-                    listener.Stop();
-
-                } catch (Exception e) {
-                    Console.WriteLine(e);
-                }
-
-                Assert.That(context.Request.ContentType, Is.EqualTo("application/json; charset=utf-8"));
-                Assert.That(context.Request.HttpMethod, Is.EqualTo("POST"));
-
-                return body;
-            });
         }
 
         string GetLocalhostAddress()
